@@ -16,10 +16,12 @@ oc create -f operatorgroup-logging.yaml
 ```
 #### Check available software-version of the operators
 ```
-oc get packagemanifest elasticsearch-operator -n openshift-marketplace -o jsonpath='{.status.defaultChannel}'
+oc get packagemanifest elasticsearch-operator -n openshift-marketplace \
+  -o go-template='{{range .status.channels}}{{.name}}{{"\n"}}{{end}}'
 ```
 ```
-oc get packagemanifest cluster-logging -n openshift-marketplace -o jsonpath='{.status.defaultChannel}'
+oc get packagemanifest cluster-logging -n openshift-marketplace \
+  -o go-template='{{range .status.channels}}{{.name}}{{"\n"}}{{end}}'
 ```
 ###### Modify the following value
 SOFTWARE-VERSION
@@ -28,12 +30,19 @@ in operator-subscription-logging.yaml
 and 
 in operator-subscription-es.yaml
 
+Pick the same version as your cluster 
+```
+sed -i 's/<SOFTWARE-VERSION>/<VERSION YOU PICKED>/' operator-subscription-es.yaml
+```
+```
+sed -i 's/<SOFTWARE-VERSION>/<VERSION YOU PICKED>/' operator-subscription-logging.yaml
+```
 #### Create subscriptions
 ```
-oc create -f operator-subscrion-es.yaml
+oc create -f operator-subscription-es.yaml
 ```
 ```
-oc create -f operator-subscrion-loggging.yaml
+oc create -f operator-subscription-loggging.yaml
 ```
 
 #### Create Role-based Access Control (RBAC) for Prometheus
@@ -76,4 +85,7 @@ oc create -f custom-resource-definition-logging-on-infras.yaml
 #### Check the deployment
 ```
 oc get pods -o wide -n openshift-logging
+```
+```
+oc get pods -o wide -n openshift-monitoring
 ```

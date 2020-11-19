@@ -1,19 +1,21 @@
+---
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-  name: monitoring-alertmgr-pv-3
+  name: prometheus-pv-0
   labels:
-    infrapvc: alertmanager
+    infrapvc: prometheus
 spec:
   capacity:
-    storage: 20Gi
+    storage: 100Gi
   accessModes:
     - ReadWriteOnce
   persistentVolumeReclaimPolicy: Retain
   nfs:
-    path: <PATH TO PREDEFINED STORAGE>
+    path: <PATH TO PREDEFINED VOLUME>
     server: <FQDN OF NFS SERVER>
     readOnly: false
   claimRef:
-    name: alertmanager-pvc-alertmanager-main-2
+    name: prometheus-k8s-db-prometheus-k8s-0
     namespace: openshift-monitoring
+...
